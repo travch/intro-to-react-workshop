@@ -108,17 +108,47 @@ import TabletView from './exercise.tablet';
  * when it should be rendering at any given time, based on whether or not its rule matches.
  **/
 
-const MediaQuery = () => null;
+class MediaQuery extends React.Component {
+  state = {
+    width: 0,
+  }
+
+  updateDimensions = (e) => {
+    if (this.state.width !== e.target.innerWidth) {
+      this.setState({ width: e.target.innerWidth });
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.updateDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions);
+  }
+
+  render() {
+    if (window.matchMedia(this.props.query).matches) {
+      return (
+        <>
+          {this.props.name}
+          {this.props.children}
+        </>
+      )
+    }
+    return null;
+  }
+}
 
 const Exercise = () => (
   <React.Fragment>
-    <MediaQuery query="(max-width: 600px)">
+    <MediaQuery query="(max-width: 600px)" name='smartphone'>
       <SmartphoneView data={fixtureData} />
     </MediaQuery>
-    <MediaQuery query="(min-width: 601px) and (max-width: 1024px)">
+    <MediaQuery query="(min-width: 601px) and (max-width: 1024px)" name='tablet'>
       <TabletView data={fixtureData} />
     </MediaQuery>
-    <MediaQuery query="(min-width: 1025px)">
+    <MediaQuery query="(min-width: 1025px)" name='desktop'>
       <DesktopView data={fixtureData} />
     </MediaQuery>
   </React.Fragment>

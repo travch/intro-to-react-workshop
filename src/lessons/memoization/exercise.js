@@ -17,37 +17,48 @@ import './exercise.css';
  * purposes. See what you can come up with, and how best to relay data between them.
  **/
 
-const Tile = ({
-  about,
-  address,
-  age,
-  company,
-  email,
-  name,
-  phone,
-  picture,
-  registered,
-  removeTile,
-}) => (
-  <div className="memo-tile m-2">
-    <Row className="justify-content-between flex-nowrap p-4">
-      <div className="p-2">
-        <img src={picture} alt={name.first + ' ' + name.last} />
+class Tile extends React.PureComponent {
+  onRemove = () => {
+    this.props.removeTile(this.props.indexForParent);
+  }
+
+  render() {
+    const {
+      about,
+      address,
+      age,
+      company,
+      email,
+      firstName,
+      lastName,
+      phone,
+      picture,
+      registered,
+    } = this.props;
+
+    return (
+      <div className="memo-tile m-2">
+        <Row className="justify-content-between flex-nowrap p-4">
+          <div className="p-2">
+            <img src={picture} alt={firstName + ' ' + lastName} />
+          </div>
+          <div className="p-2">
+            <div className="remove text-center" onClick={this.onRemove}>&times;</div>
+            <div>Name: <span>{firstName} {lastName}</span></div>
+            <div>Age: <span>{age}</span></div>
+            <div>Email Address: <span>{email}</span></div>
+            <div>Phone Number: <span>{phone}</span></div>
+            <div>Company: <span>{company}</span></div>
+            <div>Address: <span>{address}</span></div>
+            <div>Registration Date: <span>{registered}</span></div>
+            <div>About {firstName} {lastName}: <span>{about}</span></div>
+          </div>
+        </Row>
       </div>
-      <div className="p-2">
-        <div className="remove text-center" onClick={removeTile}>&times;</div>
-        <div>Name: <span>{name.first} {name.last}</span></div>
-        <div>Age: <span>{age}</span></div>
-        <div>Email Address: <span>{email}</span></div>
-        <div>Phone Number: <span>{phone}</span></div>
-        <div>Company: <span>{company}</span></div>
-        <div>Address: <span>{address}</span></div>
-        <div>Registration Date: <span>{registered}</span></div>
-        <div>About {name.first} {name.last}: <span>{about}</span></div>
-      </div>
-    </Row>
-  </div>
-);
+    );
+  }
+}
+
 
 const TileList = class extends React.Component {
   state = {
@@ -57,7 +68,7 @@ const TileList = class extends React.Component {
 
   _onRemove = index => {
     this.setState({
-      data: this.state.data.filter((record, idx) => idx !== index),
+      data: this.state.data.filter((_, idx) => idx !== index),
     });
   };
 
@@ -75,18 +86,21 @@ const TileList = class extends React.Component {
         </div>
         <Row className="flex-wrap justify-content-around align-items-start">
           {data.map((record, index) => {
-            const computedRecord = {...record};
-
-            computedRecord.name = {
-              first: record.firstName,
-              last: record.lastName,
-            };
-
-            delete computedRecord.firstName;
-            delete computedRecord.lastName;
-
             return (
-              <Tile key={index} {...computedRecord} removeTile={() => this._onRemove(index)} />
+              <Tile
+                key={record.guid}
+                about={record.about}
+                firstName={record.firstName}
+                lastName={record.lastName}
+                company={record.company}
+                email={record.email}
+                picture={record.picture}
+                phone={record.phone}
+                address={record.address}
+                age={record.age}
+                indexForParent={index}
+                removeTile={this._onRemove}
+              />
             );
           })}
         </Row>

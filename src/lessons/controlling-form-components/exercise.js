@@ -13,24 +13,29 @@ import './exercise.css';
  * option continues to change even if nothing is controlling its value.
  **/
 
-const RadioButton = ({ checked, children, value }) => (
+const RadioButton = ({ checked, children, value, onClick }) => (
   <div className={`radio-button${checked ? ' checked' : ''}`}>
-    <Button variant={checked ? 'primary' : 'secondary'}>
+    <Button variant={checked ? 'primary' : 'secondary'} onClick={() => onClick(value)}>
       <span className="icon" /> {children}
     </Button>
   </div>
 );
 
 const RadioGroup = class extends React.Component {
+  _onChange = (value) => {
+    this.props.onChange(value);
+  }
+
   render() {
-    const { children } = this.props;
-    let currentValue = undefined;
+    const { children, value } = this.props;
+    let currentValue = value;
 
     return (
       <div className="radio-group">
         {React.Children.map(children, child => React.cloneElement(child, {
           ...child.props,
           checked: child.props.value === currentValue,
+          onClick: this._onChange,
         }))}
       </div>
     );

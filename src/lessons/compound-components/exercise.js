@@ -127,8 +127,30 @@ const Job = class extends React.Component {
  * to mount and activate.
  **/
 const JobPipeline = class extends React.Component {
+  state = {
+    currentJobIndex: 0,
+  }
+
+  _onComplete = () => {
+    console.log('yeet');
+    this.setState({ currentJobIndex: this.state.currentJobIndex + 1 })
+  }
+
   render() {
-    return this.props.children;
+    const onComplete = this._onComplete;
+    const children = this.props.children[this.state.currentJobIndex];
+
+    return (
+      <>
+        {React.Children.map(
+          children,
+          child => React.cloneElement(child, {
+            ...child.props,
+            onComplete,
+          })
+        )}
+      </>
+    );
   }
 };
 

@@ -60,13 +60,20 @@ const MyStatefulForm = class extends React.Component {
   };
 
   render() {
+    const {
+      email,
+      firstName,
+      lastName,
+      phone,
+    } = this.state;
+
     return (
       <fieldset>
         <legend className="text-center">Form using State:</legend>
-        <FirstNameField />
-        <LastNameField />
-        <EmailAddressField />
-        <PhoneNumberField />
+        <FirstNameField value={firstName} onChange={this._onChange('firstName')} />
+        <LastNameField value={lastName} onChange={this._onChange('lastName')}/>
+        <EmailAddressField value={email} onChange={this._onChange('email')}/>
+        <PhoneNumberField value={phone} onChange={this._onChange('phone')}/>
       </fieldset>
     );
   }
@@ -75,18 +82,27 @@ const MyStatefulForm = class extends React.Component {
 /************************************************************
  * This section is for the Form component with prop updates *
  ************************************************************/
-const MyFormWithProps = () => (
+const MyFormWithProps = ({
+  firstName,
+  onFirstNameChange,
+  lastName,
+  onLastNameChange,
+  email,
+  onEmailChange,
+  phone,
+  onPhoneChange,
+}) => (
   <fieldset>
     <legend className="text-center">Form using Props:</legend>
-    <FirstNameField />
-    <LastNameField />
-    <EmailAddressField />
-    <PhoneNumberField />
+    <FirstNameField value={firstName} onChange={onFirstNameChange} />
+    <LastNameField value={lastName} onChange={onLastNameChange} />
+    <EmailAddressField value={email} onChange={onEmailChange} />
+    <PhoneNumberField value={phone} onChange={onPhoneChange} />
   </fieldset>
 );
 
-const MyFormIntermediatePropWrapper = () => (
-  <MyFormWithProps />
+const MyFormIntermediatePropWrapper = (props) => (
+  <MyFormWithProps {...props} />
 );
 
 const MyFormPropsWrapper = class extends React.Component {
@@ -138,19 +154,30 @@ const FormProvider = class extends React.Component {
   };
 
   render() {
-    return this.props.children;
+    const { email, firstName, lastName, phone } = this.state;
+    return (
+      <Provider value={{ email, firstName, lastName, phone, onChange: this._onChange, }}>
+        {this.props.children}
+      </Provider>
+    )
   }
 };
 
-const MyFormWithContext = () => (
-  <fieldset>
-    <legend className="text-center">Form using Context:</legend>
-    <FirstNameField />
-    <LastNameField />
-    <EmailAddressField />
-    <PhoneNumberField />
-  </fieldset>
-);
+const MyFormWithContext = () => {
+  return (
+    <Consumer>
+    {({ firstName, lastName, email, phone, onChange }) => (
+      <fieldset>
+        <legend className="text-center">Form using Context:</legend>
+        <FirstNameField value={firstName} onChange={onChange('firstName')} />
+        <LastNameField value={lastName} onChange={onChange('lastName')} />
+        <EmailAddressField value={email} onChange={onChange('email')} />
+        <PhoneNumberField value={phone} onChange={onChange('phone')} />
+      </fieldset>
+    )}
+    </Consumer>
+  );
+};
 
 const MyFormIntermediateContextWrapper = () => (
   <MyFormWithContext />

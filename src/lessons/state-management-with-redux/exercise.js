@@ -74,14 +74,20 @@ const ItemsList = class extends React.Component {
 
 // Implement me to reference the proper location in our state tree, and map it to the expected prop name!
 // eslint-disable-next-line no-unused-vars
-const mapStateToProps = state => ({});
+const mapStateToProps = state => {
+  return {
+    items: state.items,
+  };
+};
 
 // Implement me to map the right action creator function to the expected prop name!
 // eslint-disable-next-line no-unused-vars
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  deleteItem,
+};
 
 // Implement me as a connected component that feeds data to ItemsList!
-const ShipmentsListContainer = () => null;
+const ShipmentsListContainer = connect(mapStateToProps, mapDispatchToProps)(ItemsList);
 
 const Exercise = () => (
   <Provider store={store}>

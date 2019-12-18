@@ -1,7 +1,10 @@
 // eslint-disable-next-line no-unused-vars
 import { DELETE_ITEM } from './exercise.constants';
 
-export const deleteItem = itemIndex => {};
+export const deleteItem = itemIndex => ({
+  type: DELETE_ITEM,
+  index: itemIndex,
+});
 
 /*********************************************************************
  *         Don't look below here unless you want the answer!         *

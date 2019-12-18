@@ -84,8 +84,39 @@ import React from 'react';
  * };
  **/
 
-const Exercise = () => (
-  <span />
-);
+// const Exercise = () => (
+//   <span>From a functional component</span>
+// );
+
+class Exercise extends React.Component {
+  constructor(props, ...args) {
+    super(props, ...args);
+    this.state = { count: 0 };
+
+    this.onIncreaseClick = this.onIncreaseClick.bind(this);
+    this.onDecreaseClick = this.onDecreaseClick.bind(this);
+  }
+
+  onIncreaseClick() {
+    const { count } = this.state;
+    this.setState({ count: count + 1 });
+  }
+
+  onDecreaseClick() {
+    const { count } = this.state;
+    this.setState({ count: count - 1 });
+  }
+
+  render() {
+    return (
+      <div>
+        <span>From a class component, it can manage state</span>
+        <button onClick={this.onIncreaseClick}>Increase the count</button>
+        <button onClick={this.onDecreaseClick}>Decrease the count</button>
+        <div>The count: {this.state.count}</div>
+      </div>
+    );
+  }
+}
 
 export default Exercise;

@@ -14,6 +14,49 @@ import React from 'react';
  * can be used to inform them of how to render themselves.
  **/
 
+const PageCounter = ({ count }) => {
+  return (
+    <div>This page has been viewed {count} times!</div>
+  );
+};
+
+const Item = ({ name, votes, sectionName, onClick }) => {
+  return (
+    <div className="m-4 text-center">
+      <strong>{name}</strong>
+      <div>This item has {votes} votes!</div>
+      <Button variant="primary" onClick={() => onClick(sectionName)(name)}>Vote for it now!</Button>
+    </div>
+  );
+};
+
+const Section = ({ name, items, onVote, onClick, sectionName, innerRef }) => {
+  return (
+    <fieldset className="m-4 p-4 border border-white">
+      <legend className="text-center">{name}</legend>
+      {items.map(item => (
+        <Item
+          sectionName={sectionName}
+          key={item.name}
+          name={item.name}
+          votes={item.votes}
+          onClick={onVote}
+        />
+      ))}
+      <div>
+        <input
+          defaultValue=""
+          ref={innerRef}
+          placeholder="Add an item to the list!"
+          type="text"
+        />
+        &nbsp;
+        <Button variant="primary" onClick={onClick(sectionName)}>Add item</Button>
+      </div>
+    </fieldset>
+  );
+};
+
 const MyMonolithicView = class extends React.Component {
   state = {
     pageViews: 0,
@@ -110,12 +153,6 @@ const MyMonolithicView = class extends React.Component {
     });
   };
 
-  _renderCounter() {
-    return (
-      <div>This page has been viewed {this.state.pageViews} times!</div>
-    );
-  }
-
   _renderSciFiSeries() {
     const section = this.state.sections.find(section => section.name === 'Science Fiction');
 
@@ -125,29 +162,17 @@ const MyMonolithicView = class extends React.Component {
     }
 
     const { name, items } = section;
-
+    const innerRef = this._refs['Science Fiction'];
     return (
-      <fieldset className="m-4 p-4 border border-white">
-        <legend className="text-center">{name}</legend>
-        {items.map(item => (
-          <div key={item.name} className="m-4 text-center">
-            <strong>{item.name}</strong>
-            <div>This item has {item.votes} votes!</div>
-            <Button variant="primary" onClick={() => this._vote(name)(item.name)}>Vote for it now!</Button>
-          </div>
-        ))}
-        <div>
-          <input
-            defaultValue=""
-            ref={this._refs['Science Fiction']}
-            placeholder="Add an item to the list!"
-            type="text"
-          />
-          &nbsp;
-          <Button variant="primary" onClick={this._addItem('Science Fiction')}>Add item</Button>
-        </div>
-      </fieldset>
-    )
+      <Section
+        innerRef={innerRef}
+        name={name}
+        items={items}
+        onVote={this._vote}
+        onClick={this._addItem}
+        sectionName='Science Fiction'
+      />
+    );
   }
 
   _renderFantasySeries() {
@@ -159,29 +184,17 @@ const MyMonolithicView = class extends React.Component {
     }
 
     const { name, items } = section;
-
+    const innerRef = this._refs['Fantasy'];
     return (
-      <fieldset className="m-4 p-4 border border-white">
-        <legend className="text-center">{name}</legend>
-        {items.map(item => (
-          <div key={item.name} className="m-4 text-center">
-            <strong>{item.name}</strong>
-            <div>This item has {item.votes} votes!</div>
-            <Button variant="primary" onClick={() => this._vote(name)(item.name)}>Vote for it now!</Button>
-          </div>
-        ))}
-        <div>
-          <input
-            defaultValue=""
-            ref={this._refs['Fantasy']}
-            placeholder="Add an item to the list!"
-            type="text"
-          />
-          &nbsp;
-          <Button variant="primary" onClick={this._addItem('Fantasy')}>Add item</Button>
-        </div>
-      </fieldset>
-    )
+      <Section
+        innerRef={innerRef}
+        name={name}
+        items={items}
+        onVote={this._vote}
+        onClick={this._addItem}
+        sectionName='Fantasy'
+      />
+    );
   }
 
   _vote = sectionName => itemName => {
@@ -231,7 +244,7 @@ const MyMonolithicView = class extends React.Component {
           {this._renderFantasySeries()}
         </Row>
         <div className="text-center">
-          {this._renderCounter()}
+          <PageCounter count={this.state.pageViews} />
         </div>
       </div>
     );
